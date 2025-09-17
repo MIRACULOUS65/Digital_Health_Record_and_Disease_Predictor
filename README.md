@@ -292,6 +292,110 @@ Each component requires specific environment variables for proper operation. See
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+
+
+# Smart Contracts Documentation
+
+## Overview
+
+This document provides detailed information about the smart contracts implemented in the Digital Health Records (DR) system. The project uses Algorand smart contracts written in TypeScript (PuyaTS) and deployed using AlgoKit.
+
+## Contract Directory Structure
+
+```
+projects/dr-contracts/
+├── smart_contracts/
+│   ├── hello_world/
+│   │   ├── contract.algo.ts
+│   │   └── deploy-config.ts
+│   └── index.ts
+```
+
+## HelloWorld Contract
+
+### Location
+`projects/dr-contracts/smart_contracts/hello_world/contract.algo.ts`
+
+### Code
+```typescript
+import { Contract } from '@algorandfoundation/algorand-typescript'
+
+export class HelloWorld extends Contract {
+  hello(name: string): string {
+    return `Hello, ${name}`
+  }
+}
+```
+
+### Description
+This is a simple example contract that demonstrates the basic structure of an Algorand smart contract. It contains a single method `hello` that takes a string parameter and returns a greeting.
+
+### Methods
+| Method | Parameters | Return Type | Description |
+|--------|------------|-------------|-------------|
+| hello | name: string | string | Returns a greeting with the provided name |
+
+### Deployment Configuration
+Location: `projects/dr-contracts/smart_contracts/hello_world/deploy-config.ts`
+
+The deployment configuration handles:
+1. Contract deployment to the Algorand network
+2. Funding the contract account
+3. Testing the deployed contract with a sample call
+
+### Deployment Process
+1. The contract is compiled to TEAL (Transaction Execution Approval Language)
+2. An application is created on the Algorand blockchain
+3. The application is funded with ALGOs for operation
+4. A test call is made to verify functionality
+
+## Contract Management
+
+### Index File
+Location: `projects/dr-contracts/smart_contracts/index.ts`
+
+This file orchestrates the deployment of all contracts in the project. It:
+1. Dynamically imports all contract deployment configurations
+2. Executes deployment for each contract
+3. Handles error reporting for failed deployments
+
+### Adding New Contracts
+To add a new contract to the project:
+1. Use the AlgoKit generator: `algokit generate smart-contract`
+2. This creates a new folder under `smart_contracts/` with:
+   - `contract.algo.ts`: The contract implementation
+   - `deploy-config.ts`: Deployment configuration
+3. The index.ts file automatically discovers and deploys the new contract
+
+## Generated Clients
+
+When contracts are built and deployed, TypeScript clients are automatically generated and placed in:
+`projects/dr-frontend/src/contracts/`
+
+These clients provide type-safe interfaces for interacting with the deployed contracts from the frontend application.
+
+## Development Workflow
+
+1. **Build Contracts**: `algokit project run build`
+2. **Deploy Contracts**: `algokit project deploy localnet`
+3. **Generate Clients**: Automatically done during frontend build
+4. **Test Contracts**: Using deployment configuration scripts
+
+## Tools and Technologies
+
+- **Language**: Algorand TypeScript (PuyaTS)
+- **Compiler**: Puya compiler
+- **Framework**: AlgoKit
+- **Deployment**: AlgoKit CLI
+- **Testing**: Integrated deployment testing
+
+## Future Considerations
+
+For a production Digital Health Records system, additional contracts might include:
+1. **Access Control Contract**: Managing permissions for medical records
+2. **Audit Trail Contract**: Recording all access and modifications
+3. **Consent Management Contract**: Handling patient consent for data sharing
+4. **Identity Verification Contract**: Verifying healthcare provider credentials
 ## 🙏 Acknowledgments
 
 - [Algorand Foundation](https://algorand.foundation/) for the blockchain platform
