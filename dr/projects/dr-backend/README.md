@@ -1,60 +1,153 @@
 # DR Backend Server
 
-This is the backend server for the Digital Health Records system that handles:
-- IPFS file storage via Pinata
-- Algorand blockchain transaction recording
-- Prescription metadata management
+Backend server for the Digital Health Records system that handles blockchain interactions and metadata recording.
 
-## Setup Instructions
+## 🌟 Overview
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+The backend server provides REST API endpoints for:
+- Recording prescription metadata on the Algorand blockchain
+- Retrieving transaction details
+- Account balance information
+- Health checks
 
-2. Configure environment variables in `.env`:
-   - Set `SERVER_MNEMONIC` to a valid 25-word Algorand mnemonic
-   - Ensure the account has sufficient ALGO for transactions
+## 🚀 Setup
 
-3. Start the server:
-   ```bash
-   npm start
-   ```
+### Prerequisites
+- Node.js (v18+)
+- Algorand Testnet account with funded ALGOs
 
-## Funding the Server Account
+### Installation
+```bash
+npm install
+```
 
-The server account needs to be funded with ALGO to perform blockchain transactions.
+### Configuration
+Create a `.env` file with the following variables:
+```env
+PORT=3001
+SERVER_MNEMONIC="your 25-word Algorand mnemonic"
+```
 
-1. Get the server account address from the console when starting the server:
-   ```
-   Server Account Address: MPUGPI43QBAHNCMAMUBQ4WZQ6OBNUUGQVG46JF6ANJXHXY7GS4EUTHMZWU
-   ```
+### Running the Server
+```bash
+# Development mode
+npm run dev
 
-2. Visit the [Algorand TestNet Dispenser](https://dispenser.testnet.aws.algodev.network/) to fund the account:
-   - Enter the server account address
-   - Request 10-20 ALGO for testing
+# Production mode
+npm start
+```
 
-3. Alternatively, visit [AlgoExplorer TestNet](https://testnet.algoexplorer.io/) and use their faucet
+## 📡 API Endpoints
 
-## API Endpoints
+### GET /health
+Health check endpoint to verify server status.
 
-- `GET /health` - Health check endpoint
-- `POST /api/record-on-chain` - Record prescription metadata on blockchain
-- `GET /api/transaction/:txId` - Get transaction details
-- `GET /api/account/balance` - Get server account balance
+**Response:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-XX...",
+  "serverAddress": "YOUR_ALGORAND_ADDRESS"
+}
+```
 
-## Account Information
+### POST /api/record-on-chain
+Records prescription metadata on the Algorand blockchain.
 
-Current server account: MPUGPI43QBAHNCMAMUBQ4WZQ6OBNUUGQVG46JF6ANJXHXY7GS4EUTHMZWU
+**Request Body:**
+```json
+{
+  "cid": "IPFS content identifier",
+  "filename": "original filename",
+  "uploaderAddress": "user's Algorand address",
+  "iv": "initialization vector (base64)",
+  "timestamp": "upload timestamp"
+}
+```
 
-This account needs to be funded with ALGO for blockchain transactions.
-Minimum balance requirement: 0.1 ALGO
-Recommended funding: 10+ ALGO for testing
+**Response:**
+```json
+{
+  "success": true,
+  "txId": "Algorand transaction ID",
+  "confirmedRound": "block number",
+  "explorerUrl": "AlgoExplorer URL",
+  "metadata": {
+    "type": "prescription_upload",
+    "cid": "IPFS content identifier",
+    "filename": "original filename",
+    "uploaderAddress": "user's Algorand address",
+    "iv": "initialization vector (base64)",
+    "timestamp": "upload timestamp",
+    "serverAddress": "server's Algorand address"
+  }
+}
+```
 
-## Testing
+### GET /api/transaction/:txId
+Retrieves details of a specific blockchain transaction.
 
-To test the upload functionality:
-1. Make sure the frontend is running
-2. Navigate to the patient dashboard
-3. Use the prescription upload feature
-4. Check the console for transaction details
+**Response:**
+```json
+{
+  "txId": "transaction ID",
+  "confirmedRound": "block number",
+  "metadata": "parsed transaction note",
+  "explorerUrl": "AlgoExplorer URL"
+}
+```
+
+### GET /api/account/balance
+Retrieves the server account's ALGO balance.
+
+**Response:**
+```json
+{
+  "address": "account address",
+  "balance": "ALGO balance",
+  "minBalance": "minimum required balance",
+  "totalAssets": "number of assets opted in",
+  "totalAppsOptedIn": "number of apps opted in"
+}
+```
+
+## 🔧 Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `PORT` | Server port (default: 3001) | No |
+| `SERVER_MNEMONIC` | 25-word Algorand account mnemonic | Yes |
+| `PURESTAKE_API_KEY` | PureStake API key (optional) | No |
+
+## 🛡️ Security
+
+- All blockchain interactions are signed with the server's private key
+- Metadata is stored in transaction notes (visible on blockchain)
+- Server requires a funded Algorand account for transaction fees
+
+## 🔄 Algorand Endpoints
+
+The server automatically tries multiple Algorand endpoints:
+1. Nodely Testnet
+2. AlgoNode Testnet
+3. PureStake Testnet
+4. AlgoExplorer Testnet
+
+## 📈 Demo Mode
+
+If blockchain connectivity fails, the server operates in demo mode:
+- Returns mock transaction IDs
+- No real blockchain transactions occur
+- Useful for development and testing
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
