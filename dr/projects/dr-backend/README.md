@@ -1,84 +1,60 @@
-# Web3 Prescription Storage System
+# DR Backend Server
 
-This directory contains the backend server for the AI-powered decentralized healthcare platform's Web3 prescription storage system.
+This is the backend server for the Digital Health Records system that handles:
+- IPFS file storage via Pinata
+- Algorand blockchain transaction recording
+- Prescription metadata management
 
 ## Setup Instructions
 
-### 1. Install Dependencies
-```bash
-npm install
-```
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-### 2. Environment Configuration
-```bash
-# Copy the environment template
-cp .env.example .env
+2. Configure environment variables in `.env`:
+   - Set `SERVER_MNEMONIC` to a valid 25-word Algorand mnemonic
+   - Ensure the account has sufficient ALGO for transactions
 
-# Edit .env and add your configuration:
-# - SERVER_MNEMONIC: 25-word Algorand testnet account mnemonic
-# - PORT: Server port (default: 3001)
-```
+3. Start the server:
+   ```bash
+   npm start
+   ```
 
-### 3. Get Algorand Testnet Account
-1. Create a new account at [https://testnet.algoexplorer.io/](https://testnet.algoexplorer.io/)
-2. Fund it with testnet Algos from [https://testnet-algorand.sandbox.coinsmith.org/](https://testnet-algorand.sandbox.coinsmith.org/)
-3. Add the 25-word mnemonic to your `.env` file
+## Funding the Server Account
 
-### 4. Start the Server
-```bash
-# Development mode
-npm run dev
+The server account needs to be funded with ALGO to perform blockchain transactions.
 
-# Production mode
-npm start
-```
+1. Get the server account address from the console when starting the server:
+   ```
+   Server Account Address: MPUGPI43QBAHNCMAMUBQ4WZQ6OBNUUGQVG46JF6ANJXHXY7GS4EUTHMZWU
+   ```
+
+2. Visit the [Algorand TestNet Dispenser](https://dispenser.testnet.aws.algodev.network/) to fund the account:
+   - Enter the server account address
+   - Request 10-20 ALGO for testing
+
+3. Alternatively, visit [AlgoExplorer TestNet](https://testnet.algoexplorer.io/) and use their faucet
 
 ## API Endpoints
 
-### Health Check
-- **GET** `/health`
-- Returns server status and account information
+- `GET /health` - Health check endpoint
+- `POST /api/record-on-chain` - Record prescription metadata on blockchain
+- `GET /api/transaction/:txId` - Get transaction details
+- `GET /api/account/balance` - Get server account balance
 
-### Record Prescription on Blockchain
-- **POST** `/api/record-on-chain`
-- Body: `{ cid, filename, uploaderAddress, iv, timestamp }`
-- Records prescription metadata on Algorand blockchain
-- Returns transaction ID and confirmation details
+## Account Information
 
-### Get Transaction Details
-- **GET** `/api/transaction/:txId`
-- Returns transaction information and decoded metadata
+Current server account: MPUGPI43QBAHNCMAMUBQ4WZQ6OBNUUGQVG46JF6ANJXHXY7GS4EUTHMZWU
 
-### Get Account Balance
-- **GET** `/api/account/balance`
-- Returns server account balance and information
+This account needs to be funded with ALGO for blockchain transactions.
+Minimum balance requirement: 0.1 ALGO
+Recommended funding: 10+ ALGO for testing
 
-## How It Works
+## Testing
 
-1. **Frontend uploads encrypted file** to IPFS and gets CID
-2. **Backend receives metadata** including CID, filename, IV, timestamp
-3. **Creates 0-ALGO transaction** to itself with metadata in note field
-4. **Submits to Algorand testnet** and waits for confirmation
-5. **Returns transaction ID** for verification
-
-## Security Features
-
-- Client-side encryption before upload
-- Metadata-only storage on blockchain
-- Encrypted files on IPFS
-- Transaction verification on public blockchain
-
-## Environment Variables
-
-- `SERVER_MNEMONIC`: 25-word mnemonic for Algorand account
-- `PORT`: Server port (default: 3001)
-- `ALGORAND_SERVER`: Custom Algorand node (optional)
-- `ALGORAND_PORT`: Custom port (optional)
-- `ALGORAND_TOKEN`: Custom token (optional)
-
-## Technology Stack
-
-- **Express.js**: Web server framework
-- **algosdk**: Algorand JavaScript SDK
-- **cors**: Cross-origin resource sharing
-- **dotenv**: Environment variable management
+To test the upload functionality:
+1. Make sure the frontend is running
+2. Navigate to the patient dashboard
+3. Use the prescription upload feature
+4. Check the console for transaction details
